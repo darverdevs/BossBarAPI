@@ -4,6 +4,7 @@ main: tech.nully.BossBarAPI.Main
 prefix: [BossBarAPI]
 authors: [BongoCat]
 description: An API for eaglercraft to be able to display bossbars
+depend: [ProtocolLib]
 website: nully.tech
 commands:
   bossbar:

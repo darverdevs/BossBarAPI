@@ -7,8 +7,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class BossBar {
     private Location dragonLocation;
-    private int bossHealth;
-    private String text;
+    private int bossHealth = 200;
+    private String text = "A BossBar!";
 
     private SpawnFakeWither.FakeWither dragon;
 

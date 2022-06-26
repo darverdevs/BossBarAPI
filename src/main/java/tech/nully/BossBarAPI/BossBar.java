@@ -48,7 +48,7 @@ public class BossBar {
         if (dragon != null) {
             dragon.destroy();
         }
-        dragon = new SpawnFakeWither.FakeWither(dragonLocation, ProtocolLibrary.getProtocolManager())
+        dragon = new SpawnFakeWither.FakeWither(dragonLocation, ProtocolLibrary.getProtocolManager());
         dragon.setCustomName(text);
         dragon.setVisible(false);
         dragon.create();

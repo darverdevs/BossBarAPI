@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BossBarAPI:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BossBarAPI_jar</output-path>
+    <root id="archive" name="BossBarAPI.jar">
+      <element id="module-output" name="BossBarAPI" />
+      <element id="library" level="project" name="Maven: com.github.EaglerMaven:PacketWrapper:1.5.2" />
+    </root>
+  </artifact>
+</component>

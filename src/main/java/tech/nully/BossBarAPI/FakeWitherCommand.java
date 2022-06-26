@@ -1,8 +1,6 @@
 package tech.nully.BossBarAPI;
 
-import com.comphenix.protocol.ProtocolLibrary;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,6 +19,7 @@ public class FakeWitherCommand implements CommandExecutor {
             Player player = (Player) sender;
             BossBar bar = new BossBar(player);
             bar.setText("Countdown");
+            bar.display();
 
 
             // Count down

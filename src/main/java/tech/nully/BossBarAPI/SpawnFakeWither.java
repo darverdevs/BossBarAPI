@@ -45,8 +45,8 @@ public class SpawnFakeWither extends JavaPlugin {
         public Location location;
         public ProtocolManager manager;
 
-        public FakeWither(Location location, ProtocolManager manager) {
-            this.location = location;
+        public FakeWither(Player p, ProtocolManager manager) {
+            this.location = new Location(p.getWorld(), p.getLocation().getX(), -5, p.getLocation().getZ());
             this.manager = manager;
         }
 

@@ -28,9 +28,9 @@ public class FakeWitherCommand implements CommandExecutor {
                 @Override
                 public void run() {
                     // Count down
-                    bar.setBarHealth(bar.getBarHealth() - 1);
+                    bar.setHealth(bar.getHealth() - 1);
 
-                    if (bar.getBarHealth() <= 0) {
+                    if (bar.getHealth() <= 0) {
                         bar.delete();
                         task.cancel();
                     }

@@ -22,11 +22,11 @@ public class BossBar {
         return dragonLocation;
     }
 
-    public int getBarHealth() {
+    public int getHealth() {
         return bossHealth;
     }
 
-    public void setBarHealth(int bossHealth) {
+    public void setHealth(int bossHealth) {
         this.bossHealth = bossHealth;
         if (dragon != null) {
             dragon.setHealth(bossHealth);
@@ -44,7 +44,7 @@ public class BossBar {
         }
     }
 
-    public void spawn() {
+    public void display() {
         if (dragon != null) {
             dragon.destroy();
         }

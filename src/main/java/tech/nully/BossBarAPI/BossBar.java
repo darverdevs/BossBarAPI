@@ -1,6 +1,7 @@
 package tech.nully.BossBarAPI;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -19,6 +20,8 @@ public class BossBar {
     public int getHealth() {
         return bossHealth;
     }
+
+    private TeleportScheduler t;
 
     public void setHealth(int bossHealth) {
         this.bossHealth = bossHealth;
@@ -48,17 +51,20 @@ public class BossBar {
                 dragon.destroy();
             }
         }
-        dragon = new SpawnFakeWither.FakeWither(
-                new Location(p.getWorld(), p.getLocation().getX(), -15, p.getLocation().getZ()), ProtocolLibrary.getProtocolManager());
+        dragon = new SpawnFakeWither.FakeWither(p, ProtocolLibrary.getProtocolManager());
         dragon.setCustomName(text);
         dragon.setVisible(false);
         dragon.create();
+
+        t = new TeleportScheduler(this);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), t, 100);
     }
 
     public void delete() {
         if (dragon != null) {
             if (dragon.created) {
                 dragon.destroy();
+                t.cancel();
             }
         }
     }

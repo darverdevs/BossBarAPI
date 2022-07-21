@@ -63,8 +63,8 @@ public class BossBar {
     public void delete() {
         if (dragon != null) {
             if (dragon.created) {
-                dragon.destroy();
                 t.cancel();
+                dragon.destroy();
             }
         }
     }

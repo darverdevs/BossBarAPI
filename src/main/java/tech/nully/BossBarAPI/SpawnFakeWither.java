@@ -44,10 +44,12 @@ public class SpawnFakeWither extends JavaPlugin {
 
         public Location location;
         public ProtocolManager manager;
+        public Player p;
 
         public FakeWither(Player p, ProtocolManager manager) {
             this.location = new Location(p.getWorld(), p.getLocation().getX(), -5, p.getLocation().getZ());
             this.manager = manager;
+            this.p = p;
         }
 
         public int getHealth() {
@@ -70,7 +72,7 @@ public class SpawnFakeWither extends JavaPlugin {
             if (created) {
                 WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-                watcher.setObject(METADATA_FLAGS, visible ? (byte)0 : INVISIBLE);
+                watcher.setObject(METADATA_FLAGS, visible ? (byte) 0 : INVISIBLE);
                 sendMetadata(watcher);
             }
             this.visible = visible;
@@ -99,7 +101,11 @@ public class SpawnFakeWither extends JavaPlugin {
 
             update.setEntityId(id);
             update.setEntityMetadata(watcher.getWatchableObjects());
-            broadcastPacket(update.getHandle(), true);
+            try {
+                manager.sendServerPacket(p, update.getHandle());
+            } catch (InvocationTargetException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + update.getHandle() + " to " + p, e);
+            }
         }
 
         public int getId() {
@@ -110,7 +116,7 @@ public class SpawnFakeWither extends JavaPlugin {
             Packet18SpawnMob spawnMob = new Packet18SpawnMob();
             WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-            watcher.setObject(METADATA_FLAGS, visible ? (byte)0 : INVISIBLE);
+            watcher.setObject(METADATA_FLAGS, visible ? (byte) 0 : INVISIBLE);
             watcher.setObject(METADATA_WITHER_HEALTH, (int) health); // 1.5.2 -> Change to (int)
 
             if (customName != null) {
@@ -125,7 +131,11 @@ public class SpawnFakeWither extends JavaPlugin {
             spawnMob.setZ(location.getZ());
             spawnMob.setMetadata(watcher);
 
-            broadcastPacket(spawnMob.getHandle(), true);
+            try {
+                manager.sendServerPacket(p, spawnMob.getHandle());
+            } catch (InvocationTargetException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + spawnMob.getHandle() + " to " + p, e);
+            }
             created = true;
         }
 
@@ -134,23 +144,14 @@ public class SpawnFakeWither extends JavaPlugin {
                 throw new IllegalStateException("Cannot kill a killed entity.");
 
             Packet1DDestroyEntity destroyMe = new Packet1DDestroyEntity();
-            destroyMe.setEntities(new int[] { id });
+            destroyMe.setEntities(new int[]{id});
 
-            broadcastPacket(destroyMe.getHandle(), false);
-            created = false;
-        }
-
-        public void broadcastPacket(PacketContainer packet, boolean onlyNearby) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                // Must be within the range
-                if (!onlyNearby || player.getLocation().distanceSquared(location) < HEALTH_RANGE) {
-                    try {
-                        manager.sendServerPacket(player, packet);
-                    } catch (InvocationTargetException e) {
-                        Bukkit.getLogger().log(Level.WARNING, "Cannot send " + packet + " to " + player, e);
-                    }
-                }
+            try {
+                manager.sendServerPacket(p, destroyMe.getHandle());
+            } catch (InvocationTargetException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + destroyMe.getHandle() + " to " + p, e);
             }
+            created = false;
         }
     }
 }

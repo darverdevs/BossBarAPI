@@ -23,16 +23,13 @@ public class FakeWitherCommand implements CommandExecutor {
 
 
             // Count down
-            task = Bukkit.getServer().getScheduler().runTaskTimer(Main.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    // Count down
-                    bar.setHealth(bar.getHealth() - 1);
+            task = Bukkit.getServer().getScheduler().runTaskTimer(Main.getInstance(), () -> {
+                // Count down
+                bar.setHealth(bar.getHealth() - 1);
 
-                    if (bar.getHealth() <= 0) {
-                        bar.delete();
-                        task.cancel();
-                    }
+                if (bar.getHealth() <= 0) {
+                    bar.delete();
+                    task.cancel();
                 }
             }, TICKS_PER_SECOND / 4, TICKS_PER_SECOND / 4);
         }

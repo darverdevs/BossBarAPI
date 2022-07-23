@@ -4,7 +4,6 @@ import com.comphenix.packetwrapper.Packet18SpawnMob;
 import com.comphenix.packetwrapper.Packet1DDestroyEntity;
 import com.comphenix.packetwrapper.Packet28EntityMetadata;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,8 +20,6 @@ public class SpawnFakeWither extends JavaPlugin {
     // You could also use a full-fledged API like RemoteEntities
     public static class FakeWither {
         public static final byte INVISIBLE = 0x20;
-        // Just a guess
-        public static final int HEALTH_RANGE = 80 * 80;
         // Next entity ID
         public static int NEXT_ID = 6000;
 
@@ -37,8 +34,6 @@ public class SpawnFakeWither extends JavaPlugin {
         public int id = NEXT_ID++;
         // Default health
         public int health = 300;
-
-        public boolean visible;
         public String customName;
         public boolean created;
 
@@ -65,17 +60,6 @@ public class SpawnFakeWither extends JavaPlugin {
                 sendMetadata(watcher);
             }
             this.health = health;
-        }
-
-        public void setVisible(boolean visible) {
-            // Make visible or invisible
-            if (created) {
-                WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-                watcher.setObject(METADATA_FLAGS, visible ? (byte) 0 : INVISIBLE);
-                sendMetadata(watcher);
-            }
-            this.visible = visible;
         }
 
         public void setCustomName(String name) {
@@ -116,8 +100,9 @@ public class SpawnFakeWither extends JavaPlugin {
             Packet18SpawnMob spawnMob = new Packet18SpawnMob();
             WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-            watcher.setObject(METADATA_FLAGS, visible ? (byte) 0 : INVISIBLE);
+            watcher.setObject(METADATA_FLAGS, INVISIBLE);
             watcher.setObject(METADATA_WITHER_HEALTH, (int) health); // 1.5.2 -> Change to (int)
+
 
             if (customName != null) {
                 watcher.setObject(METADATA_NAME, customName);

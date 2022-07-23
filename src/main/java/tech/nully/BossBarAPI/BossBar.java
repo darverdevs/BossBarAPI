@@ -53,7 +53,6 @@ public class BossBar {
         }
         dragon = new SpawnFakeWither.FakeWither(p, ProtocolLibrary.getProtocolManager());
         dragon.setCustomName(text);
-        dragon.setVisible(false);
         dragon.create();
 
         t = new TeleportScheduler(this);

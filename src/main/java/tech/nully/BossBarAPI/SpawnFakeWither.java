@@ -4,6 +4,7 @@ import com.comphenix.packetwrapper.Packet18SpawnMob;
 import com.comphenix.packetwrapper.Packet1DDestroyEntity;
 import com.comphenix.packetwrapper.Packet28EntityMetadata;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.injector.PlayerLoggedOutException;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,7 +34,7 @@ public class SpawnFakeWither extends JavaPlugin {
         // Unique ID
         public int id = NEXT_ID++;
         // Default health
-        public int health = 300;
+        public int health = 200;
         public String customName;
         public boolean created;
 
@@ -42,7 +43,7 @@ public class SpawnFakeWither extends JavaPlugin {
         public Player p;
 
         public FakeWither(Player p, ProtocolManager manager) {
-            this.location = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() - 30, p.getLocation().getZ());
+            this.location = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() - 45, p.getLocation().getZ());
             this.manager = manager;
             this.p = p;
         }
@@ -135,7 +136,7 @@ public class SpawnFakeWither extends JavaPlugin {
                 manager.sendServerPacket(p, destroyMe.getHandle());
             } catch (InvocationTargetException e) {
                 Bukkit.getLogger().log(Level.WARNING, "Cannot send " + destroyMe.getHandle() + " to " + p, e);
-            }
+            } catch (PlayerLoggedOutException ignored) {}
             created = false;
         }
     }

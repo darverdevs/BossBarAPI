@@ -22,14 +22,7 @@ public class Main extends JavaPlugin {
         instance = this;
         System.out.println("BossBar is on");
         getCommand("bossbar").setExecutor(new FakeWitherCommand());
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                PacketContainer cont = new PacketContainer(event.getPacketType());
-                //TODO
-            }
-        });
-    }
+    } 
 
     // Overrides onDisable
     @Override

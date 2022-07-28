@@ -121,7 +121,7 @@ public class SpawnFakeWither extends JavaPlugin {
                 manager.sendServerPacket(p, spawnMob.getHandle());
             } catch (InvocationTargetException e) {
                 Bukkit.getLogger().log(Level.WARNING, "Cannot send " + spawnMob.getHandle() + " to " + p, e);
-            }
+            } catch (PlayerLoggedOutException ignored) {}
             created = true;
         }
 

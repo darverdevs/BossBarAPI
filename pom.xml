@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>games.bnogocarft</groupId>
-    <artifactId>ClassicCore</artifactId>
+    <groupId>tech.nully</groupId>
+    <artifactId>BossBarAPI</artifactId>
     <version>0.0.1</version>
 
     <properties>
@@ -22,23 +22,77 @@
         </repository>
     </repositories>
     <dependencies>
+        <!-- PrimCore dependencies -->
+        <dependency>
+            <groupId>com.github.EaglerMaven</groupId>
+            <artifactId>PacketWrapper</artifactId>
+            <version>1.5.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.EaglerMaven</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>3.6.4</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.EaglerMaven</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.5.2-R1.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.EaglerMaven</groupId>
-            <artifactId>Factions</artifactId>
-            <version>2.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.EaglerMaven</groupId>
-            <artifactId>MassiveCore</artifactId>
-            <version>6.4.1</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By/>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generateUniqueDependencyReducedPom>false</generateUniqueDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <minimizeJar>true</minimizeJar>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

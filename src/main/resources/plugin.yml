@@ -1,7 +1,12 @@
-name: ClassicCore
+name: BossBarAPI
 version: 0.0.1
-main: games.bnogocarft.ClassicCore.Main
-prefix: [ClassicCore]
+main: tech.nully.BossBarAPI.Main
+prefix: [BossBarAPI]
 authors: [BongoCat]
-description: A plugin made for BnogoCarft's classic factions gamemode
-website: https://bnogocarft.games
+description: An API for eaglercraft to be able to display bossbars
+depend: [ProtocolLib]
+website: nully.tech
+commands:
+  bossbar:
+    usage: /<command>
+    description: Displays a bossbar

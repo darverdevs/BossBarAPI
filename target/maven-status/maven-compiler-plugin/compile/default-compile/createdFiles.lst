@@ -1,6 +1,4 @@
-tech/nully/BossBarAPI/BossBar.class
-tech/nully/BossBarAPI/Main.class
-tech/nully/BossBarAPI/SpawnFakeWither.class
-tech/nully/BossBarAPI/TeleportScheduler.class
-tech/nully/BossBarAPI/FakeWitherCommand.class
-tech/nully/BossBarAPI/SpawnFakeWither$FakeWither.class
+games/bnogocarft/ClassicCore/Main.class
+games/bnogocarft/ClassicCore/ChatListener.class
+games/bnogocarft/ClassicCore/ChatListener$2.class
+games/bnogocarft/ClassicCore/ChatListener$1.class

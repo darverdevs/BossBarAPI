@@ -21,7 +21,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         System.out.println("BossBar is on");
-        getCommand("bossbar").setExecutor(new FakeWitherCommand());
     } 
 
     // Overrides onDisable

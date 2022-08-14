@@ -4,6 +4,7 @@ import com.comphenix.packetwrapper.Packet18SpawnMob;
 import com.comphenix.packetwrapper.Packet1DDestroyEntity;
 import com.comphenix.packetwrapper.Packet28EntityMetadata;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.injector.PlayerLoggedOutException;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import org.bukkit.Bukkit;
@@ -16,36 +17,41 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public class SpawnFakeWither extends JavaPlugin {
-    public static final int TICKS_PER_SECOND = 20;
+    static final int TICKS_PER_SECOND = 20;
 
     // You could also use a full-fledged API like RemoteEntities
-    public static class FakeWither {
+    static class FakeWither {
         public static final byte INVISIBLE = 0x20;
+        // Just a guess
+        private static final int HEALTH_RANGE = 80 * 80;
         // Next entity ID
-        public static int NEXT_ID = 6000;
+        private static int NEXT_ID = 6000;
 
-        public static final int METADATA_WITHER_HEALTH = 16; // 1.5.2 -> Change to 16
+        private static final int METADATA_WITHER_HEALTH = 16; // 1.5.2 -> Change to 16
 
         // Metadata indices
-        public static final int METADATA_FLAGS = 0;
-        public static final int METADATA_NAME = 5;        // 1.5.2 -> Change to 5
-        public static final int METADATA_SHOW_NAME = 6;   // 1.5.2 -> Change to 6
+        private static final int METADATA_FLAGS = 0;
+        private static final int METADATA_NAME = 5;        // 1.5.2 -> Change to 5
+        private static final int METADATA_SHOW_NAME = 6;   // 1.5.2 -> Change to 6
 
         // Unique ID
-        public int id = NEXT_ID++;
+        private int id = NEXT_ID++;
         // Default health
-        public int health = 200;
-        public String customName;
-        public boolean created;
+        private int health = 300;
 
-        public Location location;
-        public ProtocolManager manager;
-        public Player p;
+        private boolean visible;
+        private String customName;
+        boolean created;
+
+        private Location location;
+        private ProtocolManager manager;
+
+        private Player p;
 
         public FakeWither(Player p, ProtocolManager manager) {
-            this.location = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() - 45, p.getLocation().getZ());
-            this.manager = manager;
             this.p = p;
+            this.location = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() - 25, p.getLocation().getZ());
+            this.manager = manager;
         }
 
         public int getHealth() {
@@ -61,6 +67,17 @@ public class SpawnFakeWither extends JavaPlugin {
                 sendMetadata(watcher);
             }
             this.health = health;
+        }
+
+        public void setVisible(boolean visible) {
+            // Make visible or invisible
+            if (created) {
+                WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+                watcher.setObject(METADATA_FLAGS, visible ? (byte)0 : INVISIBLE);
+                sendMetadata(watcher);
+            }
+            this.visible = visible;
         }
 
         public void setCustomName(String name) {
@@ -81,16 +98,12 @@ public class SpawnFakeWither extends JavaPlugin {
             this.customName = name;
         }
 
-        public void sendMetadata(WrappedDataWatcher watcher) {
+        private void sendMetadata(WrappedDataWatcher watcher) {
             Packet28EntityMetadata update = new Packet28EntityMetadata();
 
             update.setEntityId(id);
             update.setEntityMetadata(watcher.getWatchableObjects());
-            try {
-                manager.sendServerPacket(p, update.getHandle());
-            } catch (InvocationTargetException e) {
-                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + update.getHandle() + " to " + p, e);
-            }
+            sendPacket(update.getHandle(), p);
         }
 
         public int getId() {
@@ -101,9 +114,8 @@ public class SpawnFakeWither extends JavaPlugin {
             Packet18SpawnMob spawnMob = new Packet18SpawnMob();
             WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-            watcher.setObject(METADATA_FLAGS, INVISIBLE);
+            watcher.setObject(METADATA_FLAGS, visible ? (byte)0 : INVISIBLE);
             watcher.setObject(METADATA_WITHER_HEALTH, (int) health); // 1.5.2 -> Change to (int)
-
 
             if (customName != null) {
                 watcher.setObject(METADATA_NAME, customName);
@@ -111,17 +123,13 @@ public class SpawnFakeWither extends JavaPlugin {
             }
 
             spawnMob.setEntityID(id);
-            spawnMob.setType(EntityType.ENDER_DRAGON);
+            spawnMob.setType(EntityType.WITHER);
             spawnMob.setX(location.getX());
             spawnMob.setY(location.getY());
             spawnMob.setZ(location.getZ());
             spawnMob.setMetadata(watcher);
 
-            try {
-                manager.sendServerPacket(p, spawnMob.getHandle());
-            } catch (InvocationTargetException e) {
-                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + spawnMob.getHandle() + " to " + p, e);
-            } catch (PlayerLoggedOutException ignored) {}
+            sendPacket(spawnMob.getHandle(), p);
             created = true;
         }
 
@@ -130,14 +138,18 @@ public class SpawnFakeWither extends JavaPlugin {
                 throw new IllegalStateException("Cannot kill a killed entity.");
 
             Packet1DDestroyEntity destroyMe = new Packet1DDestroyEntity();
-            destroyMe.setEntities(new int[]{id});
+            destroyMe.setEntities(new int[] { id });
 
-            try {
-                manager.sendServerPacket(p, destroyMe.getHandle());
-            } catch (InvocationTargetException e) {
-                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + destroyMe.getHandle() + " to " + p, e);
-            } catch (PlayerLoggedOutException ignored) {}
+            sendPacket(destroyMe.getHandle(), p);
             created = false;
+        }
+
+        private void sendPacket(PacketContainer packet, Player p) {
+            try {
+                manager.sendServerPacket(p, packet);
+            } catch (InvocationTargetException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Cannot send " + packet + " to " + p, e);
+            } catch (PlayerLoggedOutException ignore) {}
         }
     }
 }
